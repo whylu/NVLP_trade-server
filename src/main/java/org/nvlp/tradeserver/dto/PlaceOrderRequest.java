@@ -1,7 +1,10 @@
 package org.nvlp.tradeserver.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.nvlp.tradeserver.model.enumn.OrderType;
 import org.nvlp.tradeserver.model.enumn.Side;
+
+import java.math.BigDecimal;
 
 public class PlaceOrderRequest {
     private int userId;
@@ -11,26 +14,7 @@ public class PlaceOrderRequest {
     private double price;
     private double size;
 
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public void setSide(String side) {
-        this.side = side;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public void setSize(double size) {
-        this.size = size;
-    }
+    private String[] base_quote;
 
     public int getUserId() {
         return userId;
@@ -60,6 +44,46 @@ public class PlaceOrderRequest {
         this.symbol = symbol;
     }
 
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setSide(String side) {
+        this.side = side;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public void setSize(double size) {
+        this.size = size;
+    }
+
+    @JsonIgnore
+    public String getBase() {
+        if(base_quote==null) {
+            parseBaseQuote();
+        }
+        return base_quote[0];
+    }
+    @JsonIgnore
+    public String getQuote() {
+        if(base_quote==null) {
+            parseBaseQuote();
+        }
+        return base_quote[1];
+    }
+
+    private void parseBaseQuote() {
+        base_quote = symbol.split("-");
+    }
+
+    @JsonIgnore
     public boolean isValid() {
         if(userId <= 0)
             return false;
@@ -72,5 +96,20 @@ public class PlaceOrderRequest {
         if(size<=0)
             return false;
         return true;
+    }
+
+    @JsonIgnore
+    public BigDecimal getVolume() {
+        return BigDecimal.valueOf(price).multiply(BigDecimal.valueOf(size));
+    }
+
+    @JsonIgnore
+    public String freezeCurrency() {
+        return getSide()==Side.BUY? getQuote() : getBase();
+    }
+
+    @JsonIgnore
+    public BigDecimal freezeAmount() {
+        return getSide()==Side.BUY? getVolume() : BigDecimal.valueOf(size);
     }
 }

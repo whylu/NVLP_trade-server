@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 public class Wallet {
     private BigDecimal amount = BigDecimal.ZERO;
+    private BigDecimal frozen = BigDecimal.ZERO; // pending order's amount
     private String currency;
     private int userId;
 
@@ -11,6 +12,10 @@ public class Wallet {
     public Wallet(int userId, String currency) {
         this.currency = currency;
         this.userId = userId;
+    }
+
+    public BigDecimal getFrozen() {
+        return frozen;
     }
 
     public BigDecimal getAmount() {
@@ -30,5 +35,42 @@ public class Wallet {
     }
     public void addAmount(double increment) {
         addAmount(BigDecimal.valueOf(increment));
+    }
+
+    /**
+     * return null if insufficient balance, return wallet remain amount if success
+     * @param subtrahend
+     * @return
+     */
+    public BigDecimal decreaseAmount(double subtrahend) {
+        return decreaseAmount(BigDecimal.valueOf(subtrahend));
+    }
+    public BigDecimal decreaseAmount(BigDecimal subtrahend) {
+        BigDecimal result = null;
+        synchronized (this) {
+            if(this.amount.compareTo(subtrahend)>0) {
+                this.amount = this.amount.subtract(subtrahend);
+                result = this.amount;
+            }
+        }
+        return result; // don't return this.amount, out of synchronized block may change value
+    }
+
+
+    /**
+     * return null if insufficient balance, return wallet remain amount if success
+     * @param freezingAmount
+     * @return
+     */
+    public BigDecimal freeze(BigDecimal freezingAmount) {
+        BigDecimal result = null;
+        synchronized (this) {
+            if(this.amount.compareTo(freezingAmount)>0) {
+                this.amount = this.amount.subtract(freezingAmount);
+                this.frozen = this.frozen.add(freezingAmount);
+                result = this.amount;
+            }
+        }
+        return result;
     }
 }

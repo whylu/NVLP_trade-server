@@ -14,7 +14,7 @@ public class WalletController {
     @Autowired
     private WalletService walletService;
 
-    @GetMapping("/{uid}/{currency}")
+    @GetMapping("/{userId}/{currency}")
     public ResponseEntity getWallet(@PathVariable int userId, @PathVariable String currency) {
         Wallet wallet = walletService.getWallet(userId, currency);
         return ResponseEntity.ok(wallet);
