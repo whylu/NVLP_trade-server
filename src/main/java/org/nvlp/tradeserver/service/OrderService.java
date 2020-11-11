@@ -1,12 +1,14 @@
 package org.nvlp.tradeserver.service;
 
 
+import org.nvlp.tradeserver.dto.PlaceOrderRequest;
+import org.nvlp.tradeserver.model.OrderResponse;
 import org.springframework.stereotype.Component;
 
 @Component
 public class OrderService {
 
-    public void placeOrder() {
+    public OrderResponse placeOrder(PlaceOrderRequest request) {
         // take money from user wallet
         // put those money into system user 'market' wallet
         // insert order
@@ -17,5 +19,6 @@ public class OrderService {
         //   failed:
         //     - put money back to user wallet
         //     - return failed
+        return null;
     }
 }

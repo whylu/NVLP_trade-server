@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.math.BigDecimal;
+
 import static org.assertj.core.api.Assertions.*;
 
 
@@ -32,15 +34,15 @@ public class CoinMarketTest {
     @Test
     public void getMarketQuote() {
         MarketQuote marketQuote = coinMarket.getMarketQuote("MING-USD");
-        assertThat(marketQuote.getMinPrice()).isEqualTo(0.5);
-        assertThat(marketQuote.getMinPriceIncrement()).isEqualTo(0.5);
-        assertThat(marketQuote.getMinSize()).isEqualTo(0.0002);
-        assertThat(marketQuote.getMinSizeIncrement()).isEqualTo(0.0001);
+        assertThat(marketQuote.getMinPrice()).isEqualByComparingTo(BigDecimal.valueOf(0.5));
+        assertThat(marketQuote.getMinPriceIncrement()).isEqualByComparingTo(BigDecimal.valueOf(0.5));
+        assertThat(marketQuote.getMinSize()).isEqualByComparingTo(BigDecimal.valueOf(0.0002));
+        assertThat(marketQuote.getMinSizeIncrement()).isEqualByComparingTo(BigDecimal.valueOf(0.0001));
 
         marketQuote = coinMarket.getMarketQuote("MING-JPY");
-        assertThat(marketQuote.getMinPrice()).isEqualTo(5);
+        assertThat(marketQuote.getMinPrice()).isEqualByComparingTo(BigDecimal.valueOf(5));
 
         marketQuote = coinMarket.getMarketQuote("XRP-USD");
-        assertThat(marketQuote.getMinPrice()).isEqualTo(0.05);
+        assertThat(marketQuote.getMinPrice()).isEqualByComparingTo(BigDecimal.valueOf(0.05));
     }
 }

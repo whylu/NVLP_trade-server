@@ -2,6 +2,7 @@ package org.nvlp.tradeserver.controller;
 
 import org.junit.jupiter.api.Test;
 import org.nvlp.tradeserver.dto.PlaceOrderRequest;
+import org.nvlp.tradeserver.model.ErrorCode;
 import org.nvlp.tradeserver.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -66,8 +67,29 @@ class OrderControllerTest {
                     }
                     """))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string(is("invalid market")))
+                .andExpect(jsonPath("$.code", is(ErrorCode.INVALID_MARKER.getCode())))
+                .andExpect(jsonPath("$.msg", is(ErrorCode.INVALID_MARKER.getMsg())))
         ;
+    }
+
+    @Test
+    void placeOrder() throws Exception {
+        PlaceOrderRequest request = new PlaceOrderRequest();
+
+        mockMvc.perform(post("/order")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                        "userId": 1,
+                        "symbol": "BTC-USD",
+                        "type": "LIMIT", 
+                        "side": "BUY",
+                        "price": 1,
+                        "size": 1
+                    }
+                    """))
+                .andExpect(status().isOk())
+                ;
     }
 
 }

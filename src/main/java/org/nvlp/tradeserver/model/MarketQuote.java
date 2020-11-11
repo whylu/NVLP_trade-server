@@ -1,41 +1,43 @@
 package org.nvlp.tradeserver.model;
 
+import java.math.BigDecimal;
+
 public class MarketQuote {
 
-    private double minPrice; // 0.5
-    private double minPriceIncrement; // 0.5
-    private double minSize;  // 0.0002
-    private double minSizeIncrement; // 0.0001
+    private BigDecimal minPrice; // 0.5
+    private BigDecimal minPriceIncrement; // 0.5
+    private BigDecimal minSize;  // 0.0002
+    private BigDecimal minSizeIncrement; // 0.0001
 
-    public double getMinPrice() {
+    public BigDecimal getMinPrice() {
         return minPrice;
     }
 
-    public void setMinPrice(double minPrice) {
+    public void setMinPrice(BigDecimal minPrice) {
         this.minPrice = minPrice;
     }
 
-    public double getMinPriceIncrement() {
+    public BigDecimal getMinPriceIncrement() {
         return minPriceIncrement;
     }
 
-    public void setMinPriceIncrement(double minPriceIncrement) {
+    public void setMinPriceIncrement(BigDecimal minPriceIncrement) {
         this.minPriceIncrement = minPriceIncrement;
     }
 
-    public double getMinSize() {
+    public BigDecimal getMinSize() {
         return minSize;
     }
 
-    public void setMinSize(double minSize) {
+    public void setMinSize(BigDecimal minSize) {
         this.minSize = minSize;
     }
 
-    public double getMinSizeIncrement() {
+    public BigDecimal getMinSizeIncrement() {
         return minSizeIncrement;
     }
 
-    public void setMinSizeIncrement(double minSizeIncrement) {
+    public void setMinSizeIncrement(BigDecimal minSizeIncrement) {
         this.minSizeIncrement = minSizeIncrement;
     }
 }

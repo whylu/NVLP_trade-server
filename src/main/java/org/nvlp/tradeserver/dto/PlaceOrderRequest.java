@@ -11,7 +11,26 @@ public class PlaceOrderRequest {
     private double price;
     private double size;
 
-    private String[] base_quote;
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setSide(String side) {
+        this.side = side;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public void setSize(double size) {
+        this.size = size;
+    }
 
     public int getUserId() {
         return userId;
@@ -39,23 +58,6 @@ public class PlaceOrderRequest {
 
     public void setSymbol(String symbol) {
         this.symbol = symbol;
-    }
-
-    public String getBase() {
-        if(base_quote==null) {
-            parseBaseQuote();
-        }
-        return base_quote[0];
-    }
-    public String getQuote() {
-        if(base_quote==null) {
-            parseBaseQuote();
-        }
-        return base_quote[1];
-    }
-
-    private void parseBaseQuote() {
-        base_quote = symbol.split("-");
     }
 
     public boolean isValid() {
