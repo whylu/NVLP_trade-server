@@ -38,7 +38,7 @@ class TradeServiceTest {
     void place_inserted() {
         PlaceOrderRequest request = new PlaceOrderRequest();
         request.setUserId(TestUtils.randomUid());
-        request.setSize(10);
+        request.setSize(BigDecimal.valueOf(10));
         request.setPrice(9999.99);
         request.setSymbol("BTC-USD");
         request.setSide(Side.BUY.name());
@@ -61,7 +61,7 @@ class TradeServiceTest {
 
         request = new PlaceOrderRequest();
         request.setUserId(TestUtils.randomUid());
-        request.setSize(0.1);
+        request.setSize(BigDecimal.valueOf(0.1));
         request.setPrice(50050.503);
         request.setSymbol("BTC-USD");
         request.setSide(Side.SELL.name());

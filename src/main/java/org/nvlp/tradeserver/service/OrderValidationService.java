@@ -36,7 +36,7 @@ public class OrderValidationService {
         if(remainPrice.remainder(marketQuote.getMinPriceIncrement()).compareTo(BigDecimal.ZERO)>0)
             return ErrorCode.INVALID_ORDER_PRICE_INCREMENT;
 
-        BigDecimal remainSize = BigDecimal.valueOf(request.getSize()).subtract(marketQuote.getMinSize());
+        BigDecimal remainSize = request.getSize().subtract(marketQuote.getMinSize());
         if(remainSize.compareTo(BigDecimal.ZERO)<0)
             return ErrorCode.INVALID_ORDER_SIZE_MIN;
         if(remainSize.remainder(marketQuote.getMinSizeIncrement()).compareTo(BigDecimal.ZERO)>0)

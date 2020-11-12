@@ -13,6 +13,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
+import java.math.BigDecimal;
+
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
@@ -33,7 +35,7 @@ class OrderServiceTest {
     void placeOrder_insufficientBalance() {
         PlaceOrderRequest request = new PlaceOrderRequest();
         request.setUserId(TestUtils.randomUid());
-        request.setSize(1);
+        request.setSize(BigDecimal.ONE);
         request.setPrice(100000);
         request.setSymbol("BTC-USD");
         request.setSide(Side.BUY.name());
@@ -53,7 +55,7 @@ class OrderServiceTest {
 
         PlaceOrderRequest request = new PlaceOrderRequest();
         request.setUserId(userId);
-        request.setSize(1);
+        request.setSize(BigDecimal.ONE);
         request.setPrice(1000);
         request.setSymbol("BTC-USD");
         request.setSide(Side.BUY.name());

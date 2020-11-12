@@ -12,7 +12,7 @@ public class PlaceOrderRequest {
     private String type;
     private String side;
     private double price;
-    private double size;
+    private BigDecimal size;
 
     // derivative values
     private String[] base_quote;
@@ -34,7 +34,7 @@ public class PlaceOrderRequest {
         return price;
     }
 
-    public double getSize() {
+    public BigDecimal getSize() {
         return size;
     }
 
@@ -62,7 +62,7 @@ public class PlaceOrderRequest {
         this.price = price;
     }
 
-    public void setSize(double size) {
+    public void setSize(BigDecimal size) {
         this.size = size;
     }
 
@@ -95,7 +95,7 @@ public class PlaceOrderRequest {
             return false;
         if(price<=0)
             return false;
-        if(size<=0)
+        if(size==null || size.compareTo(BigDecimal.ZERO)<=0)
             return false;
         return true;
     }
@@ -103,7 +103,7 @@ public class PlaceOrderRequest {
     @JsonIgnore
     public BigDecimal getVolume() {
         if(volume==null) {
-            volume = BigDecimal.valueOf(price).multiply(BigDecimal.valueOf(size));
+            volume = BigDecimal.valueOf(price).multiply(size);
         }
         return volume;
     }
@@ -115,6 +115,6 @@ public class PlaceOrderRequest {
 
     @JsonIgnore
     public BigDecimal getFreezeAmount() {
-        return getSide()==Side.BUY? getVolume() : BigDecimal.valueOf(size);
+        return getSide()==Side.BUY? getVolume() : size;
     }
 }

@@ -6,6 +6,8 @@ import org.nvlp.tradeserver.model.ErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.math.BigDecimal;
+
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
@@ -30,17 +32,17 @@ class OrderValidationServiceTest {
         assertThat(service.validate(request)).isEqualTo(ErrorCode.INVALID_ORDER_PRICE_INCREMENT);
         request.setPrice(2);
 
-        request.setSize(0.00001);
+        request.setSize(BigDecimal.valueOf(0.00001));
         assertThat(service.validate(request)).isEqualTo(ErrorCode.INVALID_ORDER_SIZE_MIN);
 
-        request.setSize(0.00025);
+        request.setSize(BigDecimal.valueOf(0.00025));
         assertThat(service.validate(request)).isEqualTo(ErrorCode.INVALID_ORDER_SIZE_INCREMENT);
 
-        request.setSize(0.0002);
+        request.setSize(BigDecimal.valueOf(0.0002));
         assertThat(service.validate(request)).isNull();
-        request.setSize(0.0003);
+        request.setSize(BigDecimal.valueOf(0.0003));
         assertThat(service.validate(request)).isNull();
-        request.setSize(199.99);
+        request.setSize(BigDecimal.valueOf(199.99));
         assertThat(service.validate(request)).isNull();
 
         request.setPrice(2000);

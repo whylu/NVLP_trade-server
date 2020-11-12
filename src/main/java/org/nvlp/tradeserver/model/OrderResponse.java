@@ -4,6 +4,7 @@ import org.nvlp.tradeserver.model.enumn.OrderStatus;
 import org.nvlp.tradeserver.model.enumn.OrderType;
 import org.nvlp.tradeserver.model.enumn.Side;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 
@@ -14,7 +15,7 @@ public class OrderResponse {
     private OrderType type;
     private Side side;
     private double price;    // original price
-    private double size; // original size
+    private BigDecimal size; // original size
     private long transactTime;  // the time order handle by trade server
 
 
@@ -53,7 +54,7 @@ public class OrderResponse {
         return price;
     }
 
-    public double getSize() {
+    public BigDecimal getSize() {
         return size;
     }
 

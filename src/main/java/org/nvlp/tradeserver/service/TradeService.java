@@ -75,7 +75,7 @@ public class TradeService {
 
 
         // TODO: check race condition
-        public OrderInsertResult insertOrder(double price, double size, Side side) {
+        public OrderInsertResult insertOrder(double price, BigDecimal size, Side side) {
             OrderInsertResult result = new OrderInsertResult();
 
             // match exist order TODO:
@@ -89,7 +89,7 @@ public class TradeService {
         }
 
 
-        private PendingOrder insertPendingOrder(double price, double size, Side side) {
+        private PendingOrder insertPendingOrder(double price, BigDecimal size, Side side) {
             ConcurrentNavigableMap<Double, PendingOrderQueue> book = side==Side.BUY? this.bidBook : this.askBook;
             ConcurrentNavigableMap<Double, BigDecimal> bookSummary = side==Side.BUY? this.bidBookSummary : this.askBookSummary;
 
@@ -99,15 +99,15 @@ public class TradeService {
                 book.put(price, pendingOrderQueue);
             }
             long orderId = nextOrderId();
-            PendingOrder pendingOrder = new PendingOrder(orderId, price, BigDecimal.valueOf(size), side);
+            PendingOrder pendingOrder = new PendingOrder(orderId, price, size, side);
 
             //--- atomic operation ? ----
             pendingOrderQueue.put(pendingOrder.getId(), pendingOrder);
             bookSummary.compute(price, (existPrice, existSize) -> {
                 if(existSize==null) {
-                    return BigDecimal.valueOf(size);
+                    return size;
                 }
-                return existSize.add(BigDecimal.valueOf(size));
+                return existSize.add(size);
             });
             //--- atomic operation ? ----
 
