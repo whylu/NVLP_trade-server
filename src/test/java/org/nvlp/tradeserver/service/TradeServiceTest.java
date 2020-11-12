@@ -57,5 +57,26 @@ class TradeServiceTest {
         assertThat(response.getTransactTime()).isNotZero();
         size = bids.get(9999.99);
         assertThat(size).isEqualByComparingTo(BigDecimal.valueOf(20));
+
+
+        request = new PlaceOrderRequest();
+        request.setUserId(TestUtils.randomUid());
+        request.setSize(0.1);
+        request.setPrice(50050.503);
+        request.setSymbol("BTC-USD");
+        request.setSide(Side.SELL.name());
+        request.setType(OrderType.LIMIT.name());
+        response = tradeService.place(request);
+        assertThat(response.getStatus()).isEqualTo(OrderStatus.INSERTED);
+        assertThat(response.getTransactTime()).isNotZero();
+
+        Map<Double, BigDecimal> asks = tradeService.getAsks("BTC-USD");
+        assertThat(asks.get(50050.503)).isEqualByComparingTo(BigDecimal.valueOf(0.1));
+
+        response = tradeService.place(request);
+        assertThat(response.getStatus()).isEqualTo(OrderStatus.INSERTED);
+        assertThat(response.getTransactTime()).isNotZero();
+        assertThat(asks.get(50050.503)).isEqualByComparingTo(BigDecimal.valueOf(0.2));
+
     }
 }

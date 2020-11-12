@@ -37,10 +37,8 @@ public class TradeService {
     public OrderResponse place(PlaceOrderRequest request) {
         OrderBook orderBook = marketOrderBooks.get(request.getSymbol());
         Side side = request.getSide();
-        OrderInsertResult orderInsertResult = switch (side) {
-            case BUY -> orderBook.insertBid(request.getPrice(), request.getSize());
-            case SELL -> null;
-        };
+        OrderInsertResult orderInsertResult = orderBook
+                .insertOrder(request.getPrice(), request.getSize(), request.getSide());
 
         // insert order
         //   success:
@@ -58,17 +56,26 @@ public class TradeService {
         }
         return orderBook.getBidBookSummary();
     }
+    public Map<Double, BigDecimal> getAsks(String symbol) {
+        OrderBook orderBook = marketOrderBooks.get(symbol);
+        if(orderBook==null) {
+            return Collections.emptyMap();
+        }
+        return orderBook.getAskBookSummary();
+    }
 
 
     private class OrderBook {
 
         private ConcurrentNavigableMap<Double, PendingOrderQueue> bidBook = new ConcurrentSkipListMap<>();
+        private ConcurrentNavigableMap<Double, PendingOrderQueue> askBook = new ConcurrentSkipListMap<>();
         // key: price, value: total size
         private ConcurrentNavigableMap<Double, BigDecimal> bidBookSummary = new ConcurrentSkipListMap<>();
+        private ConcurrentNavigableMap<Double, BigDecimal> askBookSummary = new ConcurrentSkipListMap<>();
 
 
         // TODO: check race condition
-        public OrderInsertResult insertBid(double price, double size) {
+        public OrderInsertResult insertOrder(double price, double size, Side side) {
             OrderInsertResult result = new OrderInsertResult();
 
             // match exist order TODO:
@@ -76,17 +83,28 @@ public class TradeService {
 
 
             // if order size remain, place order
-            PendingOrderQueue pendingOrderQueue = bidBook.get(price);
+            PendingOrder pendingOrder = insertPendingOrder(price, size, side);
+            result.addPending(pendingOrder);
+
+            return result;
+        }
+
+
+        private PendingOrder insertPendingOrder(double price, double size, Side side) {
+            ConcurrentNavigableMap<Double, PendingOrderQueue> book = side==Side.BUY? this.bidBook : this.askBook;
+            ConcurrentNavigableMap<Double, BigDecimal> bookSummary = side==Side.BUY? this.bidBookSummary : this.askBookSummary;
+
+            PendingOrderQueue pendingOrderQueue = book.get(price);
             if(pendingOrderQueue==null) { // init
                 pendingOrderQueue = new PendingOrderQueue();
-                bidBook.put(price, pendingOrderQueue);
+                book.put(price, pendingOrderQueue);
             }
             long orderId = nextOrderId();
             PendingOrder pendingOrder = new PendingOrder(orderId, price, BigDecimal.valueOf(size));
 
             //--- atomic operation ? ----
             pendingOrderQueue.put(pendingOrder.getId(), pendingOrder);
-            bidBookSummary.compute(price, (existPrice, existSize) -> {
+            bookSummary.compute(price, (existPrice, existSize) -> {
                 if(existSize==null) {
                     return BigDecimal.valueOf(size);
                 }
@@ -94,14 +112,17 @@ public class TradeService {
             });
             //--- atomic operation ? ----
 
-            result.addPending(pendingOrder);
-            return result;
+            return pendingOrder;
         }
+
 
         public ConcurrentNavigableMap<Double, BigDecimal> getBidBookSummary() {
             return bidBookSummary;
         }
 
+        public ConcurrentNavigableMap<Double, BigDecimal> getAskBookSummary() {
+            return askBookSummary;
+        }
 
         /**
          * key: orderId
@@ -110,5 +131,4 @@ public class TradeService {
         }
 
     }
-
 }
