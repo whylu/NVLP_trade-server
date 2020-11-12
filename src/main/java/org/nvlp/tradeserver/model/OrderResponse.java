@@ -70,4 +70,8 @@ public class OrderResponse {
         transactTime = Instant.now().toEpochMilli();
         return this;
     }
+
+    public boolean isRejected() {
+        return status == OrderStatus.REJECTED;
+    }
 }

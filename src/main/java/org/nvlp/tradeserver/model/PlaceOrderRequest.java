@@ -14,7 +14,9 @@ public class PlaceOrderRequest {
     private double price;
     private double size;
 
+    // derivative values
     private String[] base_quote;
+    private BigDecimal volume;
 
     public int getUserId() {
         return userId;
@@ -100,16 +102,19 @@ public class PlaceOrderRequest {
 
     @JsonIgnore
     public BigDecimal getVolume() {
-        return BigDecimal.valueOf(price).multiply(BigDecimal.valueOf(size));
+        if(volume==null) {
+            volume = BigDecimal.valueOf(price).multiply(BigDecimal.valueOf(size));
+        }
+        return volume;
     }
 
     @JsonIgnore
-    public String freezeCurrency() {
+    public String getFreezeCurrency() {
         return getSide()==Side.BUY? getQuote() : getBase();
     }
 
     @JsonIgnore
-    public BigDecimal freezeAmount() {
+    public BigDecimal getFreezeAmount() {
         return getSide()==Side.BUY? getVolume() : BigDecimal.valueOf(size);
     }
 }

@@ -104,6 +104,21 @@ public class WalletService {
             }
             return wallet;
         });
-
     }
+
+    public Wallet unfreeze(String currency, BigDecimal amount, int userId) {
+        String key = formatKey(userId, currency);
+
+        return walletRepository.compute(key, (existedKey, wallet) ->{
+            if(wallet==null) { // not existed, insufficient balance
+                return null;
+            }
+            BigDecimal result = wallet.unfreeze(amount);
+            if(result==null) { // failed
+                return null;
+            }
+            return wallet;
+        });
+    }
+
 }
