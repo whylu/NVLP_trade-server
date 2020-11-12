@@ -60,11 +60,6 @@ public class OrderResponse {
         return transactTime;
     }
 
-    public OrderResponse setStatus(OrderStatus status) {
-        this.status = status;
-        return this;
-    }
-
     public OrderResponse reject() {
         status = OrderStatus.REJECTED;
         transactTime = Instant.now().toEpochMilli();
