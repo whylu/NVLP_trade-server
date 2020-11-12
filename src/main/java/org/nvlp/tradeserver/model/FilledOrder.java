@@ -1,13 +1,15 @@
 package org.nvlp.tradeserver.model;
 
+import org.nvlp.tradeserver.model.enumn.Side;
+
 import java.math.BigDecimal;
 
 public class FilledOrder extends PendingOrder {
 
     private long timestamp;
 
-    public FilledOrder(long orderId, double price, BigDecimal size, long timestamp) {
-        super(orderId, price, size);
+    public FilledOrder(long orderId, double price, BigDecimal size, Side side, long timestamp) {
+        super(orderId, price, size, side);
         this.timestamp = timestamp;
     }
 

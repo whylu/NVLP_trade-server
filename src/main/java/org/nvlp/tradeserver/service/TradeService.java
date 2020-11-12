@@ -81,7 +81,6 @@ public class TradeService {
             // match exist order TODO:
             // filledOrder
 
-
             // if order size remain, place order
             PendingOrder pendingOrder = insertPendingOrder(price, size, side);
             result.addPending(pendingOrder);
@@ -100,7 +99,7 @@ public class TradeService {
                 book.put(price, pendingOrderQueue);
             }
             long orderId = nextOrderId();
-            PendingOrder pendingOrder = new PendingOrder(orderId, price, BigDecimal.valueOf(size));
+            PendingOrder pendingOrder = new PendingOrder(orderId, price, BigDecimal.valueOf(size), side);
 
             //--- atomic operation ? ----
             pendingOrderQueue.put(pendingOrder.getId(), pendingOrder);
