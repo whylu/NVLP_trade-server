@@ -21,6 +21,8 @@ class WalletTest {
 
         assertThat(w.getAmount()).isEqualByComparingTo(BigDecimal.valueOf(8765.4322));
 
+        result = w.decreaseAmount(8765.4322);
+        assertThat(result).isEqualByComparingTo(BigDecimal.ZERO);
     }
 
     @Test
@@ -34,5 +36,28 @@ class WalletTest {
 
         result = w.freeze(BigDecimal.valueOf(50000));
         assertThat(result).isNull();
+
+        result = w.freeze(BigDecimal.valueOf(8765.4322));
+        assertThat(result).isEqualByComparingTo(BigDecimal.ZERO);
+
     }
+
+    @Test
+    void unfreeze() {
+        Wallet wallet = new Wallet();
+        wallet.addAmount(10000);
+        wallet.freeze(BigDecimal.valueOf(10000));
+
+        BigDecimal unfreeze = wallet.unfreeze(BigDecimal.valueOf(50000));
+        assertThat(unfreeze).isNull();
+
+        BigDecimal walletAmount = wallet.unfreeze(BigDecimal.valueOf(500));
+        assertThat(walletAmount).isEqualByComparingTo(BigDecimal.valueOf(500));
+        assertThat(wallet.getFrozen()).isEqualByComparingTo(BigDecimal.valueOf(9500));
+
+        walletAmount = wallet.unfreeze(BigDecimal.valueOf(9500));
+        assertThat(walletAmount).isEqualByComparingTo(BigDecimal.valueOf(10000));
+        assertThat(wallet.getFrozen()).isEqualByComparingTo(BigDecimal.ZERO);
+    }
+
 }

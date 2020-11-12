@@ -48,7 +48,7 @@ public class Wallet {
     public BigDecimal decreaseAmount(BigDecimal subtrahend) {
         BigDecimal result = null;
         synchronized (this) {
-            if(this.amount.compareTo(subtrahend)>0) {
+            if(this.amount.compareTo(subtrahend)>=0) {
                 this.amount = this.amount.subtract(subtrahend);
                 result = this.amount;
             }
@@ -65,9 +65,27 @@ public class Wallet {
     public BigDecimal freeze(BigDecimal freezingAmount) {
         BigDecimal result = null;
         synchronized (this) {
-            if(this.amount.compareTo(freezingAmount)>0) {
+            if(this.amount.compareTo(freezingAmount)>=0) {
                 this.amount = this.amount.subtract(freezingAmount);
                 this.frozen = this.frozen.add(freezingAmount);
+                result = this.amount;
+            }
+        }
+        return result;
+    }
+
+
+    /**
+     * return null if insufficient balance, return wallet remain amount if success
+     * @param unfreezingAmount
+     * @return
+     */
+    public BigDecimal unfreeze(BigDecimal unfreezingAmount) {
+        BigDecimal result = null;
+        synchronized (this) {
+            if(this.frozen.compareTo(unfreezingAmount)>=0) {
+                this.frozen = this.frozen.subtract(unfreezingAmount);
+                this.amount = this.amount.add(unfreezingAmount);
                 result = this.amount;
             }
         }
