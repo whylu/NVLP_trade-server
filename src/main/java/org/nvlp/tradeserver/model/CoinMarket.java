@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 
 @Component
@@ -41,5 +42,8 @@ public class CoinMarket {
         return marketQuoteMap.get(pair);
     }
 
+    public void forEach(BiConsumer<String, MarketQuote> biConsumer) {
+        marketQuoteMap.forEach(biConsumer);
+    }
 }
 

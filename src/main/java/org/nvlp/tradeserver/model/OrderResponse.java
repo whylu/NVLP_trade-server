@@ -5,6 +5,7 @@ import org.nvlp.tradeserver.model.enumn.OrderType;
 import org.nvlp.tradeserver.model.enumn.Side;
 
 import java.time.Instant;
+import java.util.List;
 
 public class OrderResponse {
     private String symbol;
@@ -68,5 +69,16 @@ public class OrderResponse {
 
     public boolean isRejected() {
         return status == OrderStatus.REJECTED;
+    }
+
+    public OrderResponse compose(OrderInsertResult orderInsertResult) {
+        List<FilledOrder> filledOrderList = orderInsertResult.getFilledOrderList();
+        if(filledOrderList!=null) { // partially or full transacted
+
+        } else { // no transacted
+            status = OrderStatus.INSERTED;
+        }
+        transactTime = Instant.now().toEpochMilli();
+        return this;
     }
 }

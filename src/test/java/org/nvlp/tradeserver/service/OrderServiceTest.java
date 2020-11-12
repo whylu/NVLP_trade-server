@@ -40,18 +40,11 @@ class OrderServiceTest {
         request.setType(OrderType.LIMIT.name());
 
         OrderResponse orderResponse = service.placeOrder(request);
-        assertThatInputValueUnchanged(request, orderResponse);
+        TestUtils.assertThatInputValueUnchanged(request, orderResponse);
         assertThat(orderResponse.getStatus()).isEqualTo(OrderStatus.REJECTED);
         assertThat(orderResponse.getTransactTime()).isNotZero();
     }
 
-    private void assertThatInputValueUnchanged(PlaceOrderRequest request, OrderResponse orderResponse) {
-        assertThat(orderResponse.getSize()).isEqualTo(request.getSize());
-        assertThat(orderResponse.getPrice()).isEqualTo(request.getPrice());
-        assertThat(orderResponse.getSymbol()).isEqualTo(request.getSymbol());
-        assertThat(orderResponse.getSide()).isEqualTo(request.getSide());
-        assertThat(orderResponse.getType()).isEqualTo(request.getType());
-    }
 
     @Test
     void placeOrder_reject_by_tradeService() {
@@ -70,7 +63,7 @@ class OrderServiceTest {
         doReturn(fakeReject).when(tradeService).place(request);
 
         OrderResponse orderResponse = service.placeOrder(request);
-        assertThatInputValueUnchanged(request, orderResponse);
+        TestUtils.assertThatInputValueUnchanged(request, orderResponse);
 
         verify(walletService).freeze(request.getFreezeCurrency(), request.getFreezeAmount(), request.getUserId());
         verify(walletService).unfreeze(request.getFreezeCurrency(), request.getFreezeAmount(), request.getUserId());
