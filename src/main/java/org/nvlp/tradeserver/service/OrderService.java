@@ -30,7 +30,7 @@ public class OrderService {
 
             return null;
         } else { // insufficient balance
-            return OrderResponse.of(request).setStatus(OrderStatus.REJECTED);
+            return OrderResponse.of(request).reject();
         }
     }
 }

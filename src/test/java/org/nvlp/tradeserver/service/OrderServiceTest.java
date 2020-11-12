@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.nvlp.tradeserver.dto.PlaceOrderRequest;
 import org.nvlp.tradeserver.model.OrderResponse;
 import org.nvlp.tradeserver.model.enumn.OrderStatus;
+import org.nvlp.tradeserver.model.enumn.OrderType;
 import org.nvlp.tradeserver.model.enumn.Side;
 import org.nvlp.tradeserver.test.utils.TestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,15 @@ class OrderServiceTest {
         request.setPrice(100000);
         request.setSymbol("BTC-USD");
         request.setSide(Side.BUY.name());
+        request.setType(OrderType.LIMIT.name());
+
         OrderResponse orderResponse = service.placeOrder(request);
+        assertThat(orderResponse.getSize()).isEqualTo(1);
+        assertThat(orderResponse.getPrice()).isEqualTo(100000);
+        assertThat(orderResponse.getSymbol()).isEqualTo("BTC-USD");
+        assertThat(orderResponse.getSide()).isEqualTo(Side.BUY);
+        assertThat(orderResponse.getType()).isEqualTo(OrderType.LIMIT);
         assertThat(orderResponse.getStatus()).isEqualTo(OrderStatus.REJECTED);
+        assertThat(orderResponse.getTransactTime()).isNotZero();
     }
 }

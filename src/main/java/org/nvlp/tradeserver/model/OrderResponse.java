@@ -5,16 +5,18 @@ import org.nvlp.tradeserver.model.enumn.OrderStatus;
 import org.nvlp.tradeserver.model.enumn.OrderType;
 import org.nvlp.tradeserver.model.enumn.Side;
 
+import java.time.Instant;
+
 public class OrderResponse {
     private String symbol;
     private String orderId;
-    private String tradeId;
     private OrderStatus status;
     private OrderType type;
     private Side side;
     private double price;    // original price
     private double size; // original size
-    private long transactTime;
+    private long transactTime;  // the time order handle by trade server
+
 
     public static OrderResponse of(PlaceOrderRequest request) {
         OrderResponse r = new OrderResponse();
@@ -33,10 +35,6 @@ public class OrderResponse {
 
     public String getOrderId() {
         return orderId;
-    }
-
-    public String getTradeId() {
-        return tradeId;
     }
 
     public OrderStatus getStatus() {
@@ -65,6 +63,12 @@ public class OrderResponse {
 
     public OrderResponse setStatus(OrderStatus status) {
         this.status = status;
+        return this;
+    }
+
+    public OrderResponse reject() {
+        status = OrderStatus.REJECTED;
+        transactTime = Instant.now().toEpochMilli();
         return this;
     }
 }
