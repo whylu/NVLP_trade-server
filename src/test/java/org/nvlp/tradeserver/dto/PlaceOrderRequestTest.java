@@ -1,6 +1,7 @@
 package org.nvlp.tradeserver.dto;
 
 import org.junit.Test;
+import org.nvlp.tradeserver.model.PlaceOrderRequest;
 
 import static org.assertj.core.api.Assertions.*;
 

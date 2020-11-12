@@ -1,6 +1,6 @@
 package org.nvlp.tradeserver.service;
 
-import org.nvlp.tradeserver.dto.PlaceOrderRequest;
+import org.nvlp.tradeserver.model.PlaceOrderRequest;
 import org.nvlp.tradeserver.model.CoinMarket;
 import org.nvlp.tradeserver.model.ErrorCode;
 import org.nvlp.tradeserver.model.MarketQuote;

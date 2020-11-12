@@ -1,13 +1,11 @@
 package org.nvlp.tradeserver.service;
 
 import org.junit.jupiter.api.Test;
-import org.nvlp.tradeserver.dto.DepositRequest;
-import org.nvlp.tradeserver.model.Wallet;
+import org.nvlp.tradeserver.model.DepositRequest;
 
 import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 class WalletServiceTest {
 

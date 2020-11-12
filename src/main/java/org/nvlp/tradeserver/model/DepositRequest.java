@@ -1,4 +1,4 @@
-package org.nvlp.tradeserver.dto;
+package org.nvlp.tradeserver.model;
 
 import org.springframework.util.StringUtils;
 

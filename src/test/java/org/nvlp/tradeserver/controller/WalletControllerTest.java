@@ -1,7 +1,7 @@
 package org.nvlp.tradeserver.controller;
 
 import org.junit.jupiter.api.Test;
-import org.nvlp.tradeserver.dto.DepositRequest;
+import org.nvlp.tradeserver.model.DepositRequest;
 import org.nvlp.tradeserver.model.Wallet;
 import org.nvlp.tradeserver.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;

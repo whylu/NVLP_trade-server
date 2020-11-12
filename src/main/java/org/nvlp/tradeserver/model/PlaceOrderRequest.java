@@ -1,4 +1,4 @@
-package org.nvlp.tradeserver.dto;
+package org.nvlp.tradeserver.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.nvlp.tradeserver.model.enumn.OrderType;

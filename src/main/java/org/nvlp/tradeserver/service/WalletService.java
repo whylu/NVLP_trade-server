@@ -1,8 +1,7 @@
 package org.nvlp.tradeserver.service;
 
-import org.nvlp.tradeserver.dto.DepositRequest;
+import org.nvlp.tradeserver.model.DepositRequest;
 import org.nvlp.tradeserver.model.Wallet;
-import org.nvlp.tradeserver.model.enumn.Side;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;

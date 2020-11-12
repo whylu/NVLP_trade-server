@@ -1,6 +1,5 @@
 package org.nvlp.tradeserver.model;
 
-import org.nvlp.tradeserver.dto.PlaceOrderRequest;
 import org.nvlp.tradeserver.model.enumn.OrderStatus;
 import org.nvlp.tradeserver.model.enumn.OrderType;
 import org.nvlp.tradeserver.model.enumn.Side;

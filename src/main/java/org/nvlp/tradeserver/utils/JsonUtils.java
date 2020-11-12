@@ -2,7 +2,6 @@ package org.nvlp.tradeserver.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.nvlp.tradeserver.dto.DepositRequest;
 
 import java.io.IOException;
 

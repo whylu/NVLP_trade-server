@@ -1,7 +1,7 @@
 package org.nvlp.tradeserver.controller;
 
 
-import org.nvlp.tradeserver.dto.PlaceOrderRequest;
+import org.nvlp.tradeserver.model.PlaceOrderRequest;
 import org.nvlp.tradeserver.model.ErrorCode;
 import org.nvlp.tradeserver.model.OrderResponse;
 import org.nvlp.tradeserver.service.OrderService;

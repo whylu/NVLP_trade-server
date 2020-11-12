@@ -1,10 +1,9 @@
 package org.nvlp.tradeserver.service;
 
 
-import org.nvlp.tradeserver.dto.PlaceOrderRequest;
+import org.nvlp.tradeserver.model.PlaceOrderRequest;
 import org.nvlp.tradeserver.model.OrderResponse;
 import org.nvlp.tradeserver.model.Wallet;
-import org.nvlp.tradeserver.model.enumn.OrderStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

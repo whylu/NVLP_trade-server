@@ -1,7 +1,7 @@
 package org.nvlp.tradeserver.controller;
 
 import org.junit.jupiter.api.Test;
-import org.nvlp.tradeserver.dto.PlaceOrderRequest;
+import org.nvlp.tradeserver.model.PlaceOrderRequest;
 import org.nvlp.tradeserver.model.ErrorCode;
 import org.nvlp.tradeserver.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +9,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.*;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
