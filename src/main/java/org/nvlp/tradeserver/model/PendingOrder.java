@@ -1,5 +1,6 @@
 package org.nvlp.tradeserver.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.nvlp.tradeserver.model.enumn.Side;
 
 import java.math.BigDecimal;
@@ -10,14 +11,14 @@ public class PendingOrder {
     private long id;
     private double price;
     private BigDecimal origSize;
-    private BigDecimal size; // remain size
+    protected BigDecimal size; // remain size
+
+    // derivative values
+    protected boolean filled = false;
 
     public PendingOrder(long orderId, double price, BigDecimal size, Side side) {
-        this(orderId, price, size, size, side);
-    }
-    protected PendingOrder(long orderId, double price, BigDecimal origSize, BigDecimal size, Side side) {
         id = orderId;
-        this.origSize = origSize;
+        this.origSize = size;
         this.price = price;
         this.size = size;
         this.side = side;
@@ -52,6 +53,15 @@ public class PendingOrder {
     }
     public FilledOrder transact(BigDecimal size) {
         this.size = this.size.subtract(size);
-        return new FilledOrder(id, price, origSize, size, side.turn(), Instant.now().toEpochMilli());
+        this.filled = this.size.compareTo(BigDecimal.ZERO)==0;
+        FilledOrder filledOrder = new FilledOrder(id, price, origSize, side.turn(), Instant.now().toEpochMilli());
+        filledOrder.size = size;
+        filledOrder.filled = this.filled;
+        return filledOrder;
+    }
+
+    @JsonIgnore
+    public boolean isFilled() {
+        return filled;
     }
 }

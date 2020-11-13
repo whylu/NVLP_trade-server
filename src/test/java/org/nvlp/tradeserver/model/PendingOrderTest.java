@@ -19,8 +19,21 @@ class PendingOrderTest {
         FilledOrder filledOrder = pendingOrder.transact(BigDecimal.valueOf(3));
         assertThat(filledOrder.getSize()).isEqualByComparingTo(BigDecimal.valueOf(3));
         assertThat(filledOrder.getOrigSize()).isEqualByComparingTo(BigDecimal.valueOf(10));
+        assertThat(filledOrder.isFilled()).isFalse();
 
         assertThat(pendingOrder.getOrigSize()).isEqualByComparingTo(BigDecimal.valueOf(10));
         assertThat(pendingOrder.getSize()).isEqualByComparingTo(BigDecimal.valueOf(7)); //remain
+        assertThat(pendingOrder.isFilled()).isFalse();
+
+        filledOrder = pendingOrder.transact(BigDecimal.valueOf(7));
+        assertThat(filledOrder.getSize()).isEqualByComparingTo(BigDecimal.valueOf(7));
+        assertThat(filledOrder.getOrigSize()).isEqualByComparingTo(BigDecimal.valueOf(10));
+        assertThat(filledOrder.isFilled()).isTrue();
+
+        assertThat(pendingOrder.getOrigSize()).isEqualByComparingTo(BigDecimal.valueOf(10));
+        assertThat(pendingOrder.getSize()).isEqualByComparingTo(BigDecimal.valueOf(0)); //remain
+        assertThat(pendingOrder.isFilled()).isTrue();
+
+
     }
 }
