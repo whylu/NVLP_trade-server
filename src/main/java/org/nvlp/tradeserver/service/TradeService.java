@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentNavigableMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -20,6 +22,9 @@ public class TradeService {
     //key: market, BTC-USD
     // in real case, we split this map into multiple queue to handle each market
     private Map<String, OrderBook> marketOrderBooks = new HashMap<>();
+
+    // key: orderId, value: userId
+    private ConcurrentMap<Long, Integer> orderIdUserIdMap = new ConcurrentHashMap<>();
 
     @Autowired
     private CoinMarket coinMarket;
@@ -41,9 +46,24 @@ public class TradeService {
         OrderInsertResult orderInsertResult = orderBook
                 .insertOrder(request.getPrice(), request.getSize(), request.getSide());
 
+        updateOrderIdUserIdMap(request, orderInsertResult);
+
         // TODO: audit balance for filledOrders
 
         return OrderResponse.of(request).compose(orderInsertResult);
+    }
+
+    private void updateOrderIdUserIdMap(PlaceOrderRequest request, OrderInsertResult orderInsertResult) {
+        if(orderInsertResult.getPendingOrder()!=null) {
+            orderIdUserIdMap.put(orderInsertResult.getPendingOrder().getId(), request.getUserId());
+        }
+        if(!orderInsertResult.getFilledOrderList().isEmpty()) {
+            for (FilledOrder filledOrder : orderInsertResult.getFilledOrderList()) {
+                if(filledOrder.isFilled()) {
+                    orderIdUserIdMap.remove(filledOrder.getId());
+                }
+            }
+        }
     }
 
     public Map<Double, BigDecimal> getBids(String symbol) {
