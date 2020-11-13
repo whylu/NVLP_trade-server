@@ -40,6 +40,7 @@ public class PendingOrder {
         return size;
     }
 
+    @JsonIgnore
     public Side getSide() {
         return side;
     }
@@ -50,7 +51,7 @@ public class PendingOrder {
     public FilledOrder transact(BigDecimal size) {
         this.size = this.size.subtract(size);
         this.filled = this.size.compareTo(BigDecimal.ZERO)==0;
-        FilledOrder filledOrder = new FilledOrder(id, price, origSize, side.turn(), Instant.now().toEpochMilli());
+        FilledOrder filledOrder = new FilledOrder(id, price, origSize, side, Instant.now().toEpochMilli());
         filledOrder.size = size;
         filledOrder.filled = this.filled;
         return filledOrder;

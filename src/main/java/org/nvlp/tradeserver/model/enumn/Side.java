@@ -14,10 +14,4 @@ public enum Side {
         return mapByName.get(side);
     }
 
-    public Side turn() {
-        return switch (this) {
-            case BUY -> SELL;
-            case SELL -> BUY;
-        };
-    }
 }
