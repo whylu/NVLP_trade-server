@@ -9,10 +9,15 @@ public class PendingOrder {
     private Side side;
     private long id;
     private double price;
+    private BigDecimal origSize;
     private BigDecimal size; // remain size
 
     public PendingOrder(long orderId, double price, BigDecimal size, Side side) {
+        this(orderId, price, size, size, side);
+    }
+    protected PendingOrder(long orderId, double price, BigDecimal origSize, BigDecimal size, Side side) {
         id = orderId;
+        this.origSize = origSize;
         this.price = price;
         this.size = size;
         this.side = side;
@@ -24,6 +29,10 @@ public class PendingOrder {
 
     public double getPrice() {
         return price;
+    }
+
+    public BigDecimal getOrigSize() {
+        return origSize;
     }
 
     public BigDecimal getSize() {
@@ -43,6 +52,6 @@ public class PendingOrder {
     }
     public FilledOrder transact(BigDecimal size) {
         this.size = this.size.subtract(size);
-        return new FilledOrder(id, price, size, side.turn(), Instant.now().toEpochMilli());
+        return new FilledOrder(id, price, origSize, size, side.turn(), Instant.now().toEpochMilli());
     }
 }

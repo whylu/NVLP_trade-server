@@ -6,12 +6,11 @@ import java.math.BigDecimal;
 
 public class FilledOrder extends PendingOrder {
 
-    private long timestamp;
-
-    public FilledOrder(long orderId, double price, BigDecimal size, Side side, long timestamp) {
-        super(orderId, price, size, side);
+    protected FilledOrder(long orderId, double price, BigDecimal origSize, BigDecimal size, Side side, long timestamp) {
+        super(orderId, price, origSize, size, side);
         this.timestamp = timestamp;
     }
+    private long timestamp;
 
     public long getTimestamp() {
         return timestamp;
