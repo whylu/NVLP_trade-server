@@ -17,6 +17,7 @@ public class OrderResponse {
     private double price;    // original price
     private BigDecimal size; // original size
     private long transactTime;  // the time order handle by trade server
+    private List<FilledOrder> filledOrders;
 
 
     public static OrderResponse of(PlaceOrderRequest request) {
@@ -29,6 +30,9 @@ public class OrderResponse {
         return r;
     }
 
+    public List<FilledOrder> getFilledOrders() {
+        return filledOrders;
+    }
 
     public String getSymbol() {
         return symbol;
@@ -74,12 +78,13 @@ public class OrderResponse {
 
     public OrderResponse compose(OrderInsertResult orderInsertResult) {
         List<FilledOrder> filledOrderList = orderInsertResult.getFilledOrderList();
-        if(filledOrderList!=null) { // partially or full transacted
-
+        if(!filledOrderList.isEmpty()) { // partially or full transacted
+            status = size.compareTo(orderInsertResult.getFilledSize())==0? OrderStatus.FILLED : OrderStatus.PARTIALLY_FILLED;
         } else { // no transacted
             status = OrderStatus.INSERTED;
         }
         transactTime = Instant.now().toEpochMilli();
+        filledOrders = orderInsertResult.getFilledOrderList();
         return this;
     }
 }
