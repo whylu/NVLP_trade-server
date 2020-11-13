@@ -44,10 +44,6 @@ public class PendingOrder {
         return side;
     }
 
-    public void fill(BigDecimal fillSize) {
-        size = size.subtract(fillSize);
-    }
-
     public FilledOrder fullyTransact() {
         return transact(size);
     }
