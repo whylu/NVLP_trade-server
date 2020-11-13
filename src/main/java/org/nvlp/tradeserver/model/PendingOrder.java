@@ -42,6 +42,7 @@ public class PendingOrder {
         return transact(size);
     }
     public FilledOrder transact(BigDecimal size) {
+        this.size = this.size.subtract(size);
         return new FilledOrder(id, price, size, side.turn(), Instant.now().toEpochMilli());
     }
 }

@@ -212,6 +212,22 @@ class TradeServiceTest {
         assertThat(tradeService.getBids("BTC-USD")).isNotNull();
     }
 
+    @DirtiesContext
+    @Test
+    void place_test_for_orderbook_consume() {
+        tradeService.place(createOrder(100, 0.5, Side.SELL));
+
+        OrderResponse response = tradeService.place(createOrder(100, 0.4, Side.BUY));
+        assertThat(response.getStatus()).isEqualTo(OrderStatus.FILLED);
+
+        response = tradeService.place(createOrder(100, 0.1, Side.BUY));
+        assertThat(response.getStatus()).isEqualTo(OrderStatus.FILLED);
+
+        response = tradeService.place(createOrder(100, 0.1, Side.BUY));
+        assertThat(response.getStatus()).isEqualTo(OrderStatus.INSERTED);
+
+    }
+
     private PlaceOrderRequest createOrder(double price, double size, Side side) {
         PlaceOrderRequest request = new PlaceOrderRequest();
         request.setUserId(TestUtils.randomUid());
