@@ -60,4 +60,19 @@ class WalletTest {
         assertThat(wallet.getFrozen()).isEqualByComparingTo(BigDecimal.ZERO);
     }
 
+    @Test
+    void cutOffFrozen() {
+        Wallet wallet = new Wallet();
+        wallet.addAmount(10000);
+        wallet.freeze(BigDecimal.valueOf(10000));
+
+        BigDecimal remain = wallet.cutOffFrozen(BigDecimal.valueOf(50000d));
+        assertThat(remain).isNull();
+
+        remain = wallet.cutOffFrozen(BigDecimal.valueOf(500d));
+        assertThat(remain).isEqualByComparingTo(BigDecimal.valueOf(9500d));
+
+        remain = wallet.cutOffFrozen(BigDecimal.valueOf(9500d));
+        assertThat(remain).isEqualByComparingTo(BigDecimal.ZERO);
+    }
 }

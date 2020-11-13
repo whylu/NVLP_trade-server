@@ -1,9 +1,7 @@
 package org.nvlp.tradeserver.service;
 
 import org.junit.jupiter.api.Test;
-import org.nvlp.tradeserver.model.FilledOrder;
-import org.nvlp.tradeserver.model.OrderResponse;
-import org.nvlp.tradeserver.model.PlaceOrderRequest;
+import org.nvlp.tradeserver.model.*;
 import org.nvlp.tradeserver.model.enumn.OrderStatus;
 import org.nvlp.tradeserver.model.enumn.OrderType;
 import org.nvlp.tradeserver.model.enumn.Side;
@@ -24,6 +22,9 @@ class TradeServiceTest {
 
     @Autowired
     private TradeService tradeService;
+
+    @Autowired
+    private WalletService walletService;
 
     @Test
     public void testInit() throws NoSuchFieldException, IllegalAccessException {
@@ -102,7 +103,7 @@ class TradeServiceTest {
             assertThat(filledOrder.getSize()).isEqualTo(BigDecimal.valueOf(1.0));
             assertThat(filledOrder.getTimestamp()).isNotZero();
             assertThat(filledOrder.getId()).isNotZero();
-            assertThat(filledOrder.getSide()).isEqualTo(Side.BUY);
+            assertThat(filledOrder.getSide()).isEqualTo(Side.SELL);
         }
         assertThat(response.getStatus()).isEqualTo(OrderStatus.FILLED);
 
@@ -133,7 +134,7 @@ class TradeServiceTest {
             assertThat(filledOrder.getSize()).isEqualTo(BigDecimal.valueOf(1d));
             assertThat(filledOrder.getTimestamp()).isNotZero();
             assertThat(filledOrder.getId()).isNotZero();
-            assertThat(filledOrder.getSide()).isEqualTo(Side.SELL);
+            assertThat(filledOrder.getSide()).isEqualTo(Side.BUY);
         }
         assertThat(response.getStatus()).isEqualTo(OrderStatus.FILLED);
 
@@ -167,7 +168,7 @@ class TradeServiceTest {
             assertThat(filledOrder.getPrice()).isEqualTo(500);
             assertThat(filledOrder.getTimestamp()).isNotZero();
             assertThat(filledOrder.getId()).isNotZero();
-            assertThat(filledOrder.getSide()).isEqualTo(Side.BUY);
+            assertThat(filledOrder.getSide()).isEqualTo(Side.SELL);
         }
         assertThat(response.getStatus()).isEqualTo(OrderStatus.FILLED);
         assertThat(tradeService.getAsks("BTC-USD").get(500d)).isEqualByComparingTo(BigDecimal.valueOf(0.5));
@@ -201,7 +202,7 @@ class TradeServiceTest {
             assertThat(filledOrder.getPrice()).isEqualTo(100);
             assertThat(filledOrder.getTimestamp()).isNotZero();
             assertThat(filledOrder.getId()).isNotZero();
-            assertThat(filledOrder.getSide()).isEqualTo(Side.SELL);
+            assertThat(filledOrder.getSide()).isEqualTo(Side.BUY);
         }
         assertThat(response.getStatus()).isEqualTo(OrderStatus.FILLED);
         assertThat(tradeService.getBids("BTC-USD").get(100d)).isEqualByComparingTo(BigDecimal.valueOf(0.5));
@@ -238,4 +239,5 @@ class TradeServiceTest {
         request.setType(OrderType.LIMIT.name());
         return request;
     }
+
 }

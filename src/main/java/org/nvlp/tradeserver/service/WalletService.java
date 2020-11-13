@@ -2,6 +2,9 @@ package org.nvlp.tradeserver.service;
 
 import org.nvlp.tradeserver.model.DepositRequest;
 import org.nvlp.tradeserver.model.Wallet;
+import org.nvlp.tradeserver.utils.JsonUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -10,6 +13,8 @@ import java.util.concurrent.ConcurrentMap;
 
 @Component
 public class WalletService {
+
+    private static Logger LOG = LoggerFactory.getLogger(WalletService.class);
 
     private ConcurrentMap<String, Wallet> walletRepository = new ConcurrentHashMap<>();
 
@@ -27,7 +32,7 @@ public class WalletService {
     private Wallet increaseAmount(int userId, String currency, double amount) {
         return increaseAmount(userId, currency, BigDecimal.valueOf(amount));
     }
-    private Wallet increaseAmount(int userId, String currency, BigDecimal amount) {
+    public Wallet increaseAmount(int userId, String currency, BigDecimal amount) {
         String key = formatKey(userId, currency);
 
         // simulate update DB:  amount += depositRequest.getAmount()
@@ -119,6 +124,81 @@ public class WalletService {
             }
             return wallet;
         });
+    }
+
+    /**
+     * this is done by a SQL in real case
+     *
+     *  taker frozen -> maker amount
+     *  maker frozen -> taker amount
+     *
+     *  takerPayWallet --(takerAmount of takerCurrency)--> makerReceiveWallet
+     *  makerPayWallet --(makerAmount of makerCurrency)--> takerReceiveWallet
+     *  @param takerId
+     * @param takerCurrency
+     * @param takerAmount
+     * @param makerId
+     * @param makerCurrency
+     * @param makerAmount
+     * @return
+     */
+    public boolean swapFrozenAndRealizeAmount(int takerId, String takerCurrency, BigDecimal takerAmount, int makerId, String makerCurrency, BigDecimal makerAmount) {
+        Wallet takerPayWallet = null;
+        Wallet takerReceiveWallet = null;
+        Wallet makerPayWallet = null;
+        Wallet makerReceiveWallet = null;
+        synchronized (walletRepository) {
+            takerPayWallet = getOrCreateWallet(takerId, takerCurrency);
+            takerReceiveWallet = getOrCreateWallet(takerId, makerCurrency);
+            makerPayWallet = getOrCreateWallet(makerId, makerCurrency);
+            makerReceiveWallet = getOrCreateWallet(makerId, takerCurrency);
+        }
+
+        boolean success = payFrozenAndReceiveRealize(takerPayWallet, makerReceiveWallet, takerAmount);
+        if(success) {
+            success = payFrozenAndReceiveRealize(makerPayWallet, takerReceiveWallet, makerAmount);
+            if(success) {
+                LOG.info("swapFrozenAndRealizeAmount success: {}--({} {})-->{}, {}--({} {})-->{}",
+                        takerId, takerAmount, takerCurrency, makerId, makerId, makerAmount, makerCurrency, takerId);
+
+            } else {
+                LOG.info("payFrozenAndReceiveRealize failed, makerAmount:{}, makerPayWallet:{}, takerReceiveWallet:{}",
+                        makerAmount, JsonUtils.toString(makerPayWallet), JsonUtils.toString(takerReceiveWallet));
+                rollbackPayFrozenAndReceiveRealize(takerPayWallet, makerReceiveWallet, takerAmount);
+            }
+        } else {
+            LOG.info("payFrozenAndReceiveRealize failed, takerAmount:{}, takerPayWallet:{}, makerReceiveWallet:{}",
+                    makerAmount, JsonUtils.toString(makerPayWallet), JsonUtils.toString(takerReceiveWallet));
+        }
+        return success;
+    }
+
+    private void rollbackPayFrozenAndReceiveRealize(Wallet payWallet, Wallet receiveWallet, BigDecimal amount) {
+        BigDecimal decreased = receiveWallet.decreaseAmount(amount);
+        if(decreased!=null) {
+            payWallet.addAmount(amount);
+            payWallet.freeze(amount);
+        }
+//        LOG
+    }
+
+    private boolean payFrozenAndReceiveRealize(Wallet payWallet, Wallet receiveWallet, BigDecimal amount) {
+        BigDecimal cut = payWallet.cutOffFrozen(amount);
+        if(cut!=null) {
+             receiveWallet.addAmount(amount);
+             return true;
+        }
+        return false;
+    }
+
+    private Wallet getOrCreateWallet(int userId, String currency) {
+        String key = formatKey(userId, currency);
+        Wallet wallet = walletRepository.get(key);
+        if(wallet==null) {
+            wallet = new Wallet(userId, currency);
+            walletRepository.put(key, wallet);
+        }
+        return wallet;
     }
 
 }

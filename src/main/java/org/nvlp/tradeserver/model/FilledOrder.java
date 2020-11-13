@@ -15,4 +15,11 @@ public class FilledOrder extends PendingOrder {
     public long getTimestamp() {
         return timestamp;
     }
+
+    public BigDecimal getCutOffFrozenAmount() {
+        return getSide()==Side.BUY? getSize().multiply(BigDecimal.valueOf(getPrice())) : getSize();
+    }
+    public BigDecimal getRealizeAmount() {
+        return getSide()==Side.BUY? getSize() : getSize().multiply(BigDecimal.valueOf(getPrice()));
+    }
 }

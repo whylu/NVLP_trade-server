@@ -30,7 +30,7 @@ public class Wallet {
         return userId;
     }
 
-    public void addAmount(BigDecimal increment) {
+    public synchronized void addAmount(BigDecimal increment) {
         amount = amount.add(increment);
     }
     public void addAmount(double increment) {
@@ -45,7 +45,7 @@ public class Wallet {
     public BigDecimal decreaseAmount(double subtrahend) {
         return decreaseAmount(BigDecimal.valueOf(subtrahend));
     }
-    public BigDecimal decreaseAmount(BigDecimal subtrahend) {
+    public synchronized BigDecimal decreaseAmount(BigDecimal subtrahend) {
         BigDecimal result = null;
         synchronized (this) {
             if(this.amount.compareTo(subtrahend)>=0) {
@@ -87,6 +87,22 @@ public class Wallet {
                 this.frozen = this.frozen.subtract(unfreezingAmount);
                 this.amount = this.amount.add(unfreezingAmount);
                 result = this.amount;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * return null if insufficient balance, return wallet remain frozen if success
+     * @param cutOffAmount
+     * @return
+     */
+    public BigDecimal cutOffFrozen(BigDecimal cutOffAmount) {
+        BigDecimal result = null;
+        synchronized (this) {
+            if(this.frozen.compareTo(cutOffAmount)>=0) {
+                this.frozen = this.frozen.subtract(cutOffAmount);
+                result = this.frozen;
             }
         }
         return result;

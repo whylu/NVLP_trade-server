@@ -2,6 +2,8 @@ package org.nvlp.tradeserver.service;
 
 import org.nvlp.tradeserver.model.*;
 import org.nvlp.tradeserver.model.enumn.Side;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +19,8 @@ import java.util.concurrent.atomic.AtomicLong;
 @Component
 public class TradeService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(TradeService.class);
+
     private AtomicLong orderIdCounter = new AtomicLong(0);
 
     //key: market, BTC-USD
@@ -28,6 +32,9 @@ public class TradeService {
 
     @Autowired
     private CoinMarket coinMarket;
+
+    @Autowired
+    private WalletService walletService;
 
     @PostConstruct
     private void init() {
@@ -45,12 +52,43 @@ public class TradeService {
         OrderBook orderBook = marketOrderBooks.get(request.getSymbol());
         OrderInsertResult orderInsertResult = orderBook
                 .insertOrder(request.getPrice(), request.getSize(), request.getSide());
-
+        realizeFillOrderAssetToWallet(request, orderInsertResult);
         updateOrderIdUserIdMap(request, orderInsertResult);
-
-        // TODO: audit balance for filledOrders
-
         return OrderResponse.of(request).compose(orderInsertResult);
+    }
+
+    /**
+     *
+     *         USD        ||        BTC
+     *    total | frozen  ||   total | frozen
+     *     1000 |    0    ||      0  |    0      deposit 1000 USD
+     *      700 |  300    ||      0  |    0      place order  BUY BTC-USD price=1000, size=0.3
+     *      700 |  100    ||    0.2  |    0      fill 0.2 BUY order -> cut off frozen 200USD, add 0.2BTC
+     *
+     *      700 |  100    ||   0.15  |  0.05     place order  SELL BTC-USD price=5000, size=0.05
+     *      850 |  100    ||   0.15  |  0.02     fill 0.03 SELL order -> cut off frozen 0.03BTC, add 150USD
+     *
+     * @param orderInsertResult
+     */
+    private void realizeFillOrderAssetToWallet(PlaceOrderRequest request, OrderInsertResult orderInsertResult) {
+        int takerId = request.getUserId();
+        String base = request.getBase();
+        String quote = request.getQuote();
+
+        String takerCurrency = request.getSide()==Side.BUY? quote : base;
+        String makerCurrency = request.getSide()==Side.BUY? base : quote;
+
+
+        if(!orderInsertResult.getFilledOrderList().isEmpty()) {
+            for (FilledOrder filledOrder : orderInsertResult.getFilledOrderList()) {
+                int makerId = orderIdUserIdMap.get(filledOrder.getId());
+
+                BigDecimal takerAmount = request.getSide()==Side.BUY? filledOrder.getCutOffFrozenAmount() : filledOrder.getRealizeAmount();
+                BigDecimal makerAmount = request.getSide()==Side.BUY? filledOrder.getRealizeAmount() : filledOrder.getCutOffFrozenAmount();
+
+                walletService.swapFrozenAndRealizeAmount(takerId, takerCurrency, takerAmount, makerId, makerCurrency, makerAmount);
+            }
+        }
     }
 
     private void updateOrderIdUserIdMap(PlaceOrderRequest request, OrderInsertResult orderInsertResult) {
