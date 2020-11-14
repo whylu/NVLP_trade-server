@@ -30,7 +30,6 @@ class WalletControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.userId", is(1)))
                 .andExpect(jsonPath("$.currency", is("USD")))
-                .andDo(print())
         ;
     }
 
