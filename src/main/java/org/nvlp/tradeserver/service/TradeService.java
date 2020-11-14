@@ -174,6 +174,7 @@ public class TradeService {
                 if(filledOrders.isEmpty()) {
                     filledOrders = new ArrayList<>();
                 }
+                BigDecimal filledSize = BigDecimal.ZERO;
                 while (size.compareTo(BigDecimal.ZERO)>0 && !orderQueue.isEmpty()) {
                     PendingOrder pendingOrder = orderQueue.firstEntry().getValue();
 
@@ -183,6 +184,7 @@ public class TradeService {
                     //   1  -  3          =    -2     ,    1        ,     2
                     BigDecimal remainSize = size.subtract(pendingOrder.getSize());
                     if(remainSize.compareTo(BigDecimal.ZERO)>=0) {
+                        filledSize = filledSize.add(pendingOrder.getSize());
                         // pending order fully transacted, remove from queue
                         FilledOrder filledOrder = pendingOrder.fullyTransact();
 
@@ -190,6 +192,7 @@ public class TradeService {
                         orderQueue.pollFirstEntry(); // remove pendingOrder from queue
                         size = remainSize;
                     } else { // pending order partially transacted, reduce size
+                        filledSize = filledSize.add(size);
                         FilledOrder filledOrder = pendingOrder.transact(size);
                         filledOrders.add(filledOrder);
                         size = BigDecimal.ZERO;
@@ -198,7 +201,7 @@ public class TradeService {
                 if(orderQueue.isEmpty()) { // there is no pendingOrder in this price, remove price from book
                     book.remove(priceAndQueue.getKey());
                 }
-                addBookSummary(priceAndQueue.getKey(), size.subtract(origSize), bookSummary);
+                updateBookSummary(priceAndQueue.getKey(), filledSize.negate(), bookSummary);
             }
 
             return filledOrders;
@@ -221,18 +224,30 @@ public class TradeService {
 
             //--- atomic operation ? ----
             pendingOrderQueue.put(pendingOrder.getId(), pendingOrder);
-            addBookSummary(price, size, bookSummary);
+            updateBookSummary(price, size, bookSummary);
             //--- atomic operation ? ----
 
             return pendingOrder;
         }
 
-        private void addBookSummary(double price, BigDecimal size, ConcurrentNavigableMap<Double, BigDecimal> bookSummary) {
+        /**
+         * add size into summary, size could be a negative value
+         * if size become zero, remove that price row from summary
+         * @param price
+         * @param size
+         * @param bookSummary
+         */
+        private void updateBookSummary(double price, BigDecimal size, ConcurrentNavigableMap<Double, BigDecimal> bookSummary) {
             bookSummary.compute(price, (existPrice, existSize) -> {
                 if(existSize==null) {
                     return size;
                 }
-                return existSize.add(size);
+                BigDecimal remain = existSize.add(size);
+                if(remain.compareTo(BigDecimal.ZERO)==0) {
+                    return null; // which will remove this price
+                } else {
+                    return remain;
+                }
             });
         }
 

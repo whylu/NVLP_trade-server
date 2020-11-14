@@ -113,6 +113,24 @@ class TradeServiceTest {
         assertThat(response.getStatus()).isEqualTo(OrderStatus.PARTIALLY_FILLED);
     }
 
+
+    @DirtiesContext
+    @Test
+    void place_match_buy_with_sell_by_price_partially() {
+        tradeService.place(createOrder(100d, 1, Side.SELL));
+        tradeService.place(createOrder(101d, 2, Side.SELL));
+
+        OrderResponse response = tradeService.place(createOrder(105, 5, Side.BUY));
+        List<FilledOrder> filledOrders = response.getFilledOrders();
+        assertThat(filledOrders).hasSize(2);
+        assertThat(filledOrders.get(0).getPrice()).isEqualTo(100d);
+        assertThat(filledOrders.get(1).getPrice()).isEqualTo(101d);
+
+        Map<Double, BigDecimal> asks = tradeService.getAsks("BTC-USD");
+        assertThat(asks.get(100d)).isNull();
+        assertThat(asks.get(101d)).isNull();
+    }
+
     @DirtiesContext
     @Test
     void place_match_sell_with_buy_by_price() {
