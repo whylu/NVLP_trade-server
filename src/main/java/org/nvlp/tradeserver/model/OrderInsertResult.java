@@ -5,12 +5,20 @@ import java.util.Collections;
 import java.util.List;
 
 public class OrderInsertResult {
-
+    private long orderId;
     private BigDecimal filledSize = BigDecimal.ZERO;
 
     private List<FilledOrder> filledOrderList = Collections.emptyList();
 
     private PendingOrder pendingOrder;
+
+    public OrderInsertResult(long orderId) {
+        this.orderId = orderId;
+    }
+
+    public long getOrderId() {
+        return orderId;
+    }
 
     public void addPending(PendingOrder pendingOrder) {
         this.pendingOrder = pendingOrder;

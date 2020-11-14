@@ -135,7 +135,8 @@ public class TradeService {
         // TODO: check race condition
         // this function is only for limit order
         public OrderInsertResult insertOrder(double price, BigDecimal size, Side side) {
-            OrderInsertResult result = new OrderInsertResult();
+            long orderId = nextOrderId();
+            OrderInsertResult result = new OrderInsertResult(orderId);
 
             // match exist order
             List<FilledOrder> filledOrders = match(price, size, side);
@@ -148,7 +149,7 @@ public class TradeService {
 
             // if order size remain, place order
             if(size.compareTo(BigDecimal.ZERO)>0) {
-                PendingOrder pendingOrder = insertPendingOrder(price, size, side);
+                PendingOrder pendingOrder = insertPendingOrder(orderId, price, size, side);
                 result.addPending(pendingOrder);
             }
 
@@ -160,7 +161,6 @@ public class TradeService {
             ConcurrentNavigableMap<Double, PendingOrderQueue> book = side==Side.BUY? this.askBook : this.bidBook;
             ConcurrentNavigableMap<Double, BigDecimal> bookSummary = side==Side.BUY? this.askBookSummary : this.bidBookSummary;
             Comparator<Double> priceComparator = side==Side.BUY? Comparator.naturalOrder() : Comparator.reverseOrder();
-            BigDecimal origSize = size;
 
             List<FilledOrder> filledOrders = Collections.emptyList();
 
@@ -208,7 +208,7 @@ public class TradeService {
         }
 
 
-        private PendingOrder insertPendingOrder(double price, BigDecimal size, Side side) {
+        private PendingOrder insertPendingOrder(long orderId, double price, BigDecimal size, Side side) {
             if(size.compareTo(BigDecimal.ZERO)<=0) {
                 return null;
             }
@@ -219,7 +219,6 @@ public class TradeService {
                 pendingOrderQueue = new PendingOrderQueue();
                 book.put(price, pendingOrderQueue);
             }
-            long orderId = nextOrderId();
             PendingOrder pendingOrder = new PendingOrder(orderId, price, size, side);
 
             //--- atomic operation ? ----

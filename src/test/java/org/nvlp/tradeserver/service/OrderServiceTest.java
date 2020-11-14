@@ -63,7 +63,7 @@ class OrderServiceTest {
         request.setSide(Side.BUY.name());
         request.setType(OrderType.LIMIT.name());
 
-        OrderResponse fakeReject = OrderResponse.of(request).reject();
+        OrderResponse fakeReject = OrderResponse.of(request).reject(null); // fake no error code
         doReturn(fakeReject).when(tradeService).place(request);
 
         OrderResponse orderResponse = service.placeOrder(request);

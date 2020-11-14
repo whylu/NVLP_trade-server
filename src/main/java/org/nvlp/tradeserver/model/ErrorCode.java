@@ -5,7 +5,7 @@ import org.nvlp.tradeserver.utils.JsonUtils;
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ErrorCode {
-
+    NONE(0, "Zero for no error"),
 
     // order
 

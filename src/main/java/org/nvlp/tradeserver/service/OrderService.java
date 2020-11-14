@@ -1,6 +1,7 @@
 package org.nvlp.tradeserver.service;
 
 
+import org.nvlp.tradeserver.model.ErrorCode;
 import org.nvlp.tradeserver.model.PlaceOrderRequest;
 import org.nvlp.tradeserver.model.OrderResponse;
 import org.nvlp.tradeserver.model.Wallet;
@@ -35,7 +36,7 @@ public class OrderService {
             }
             return response;
         } else { // insufficient balance
-            return OrderResponse.of(request).reject();
+            return OrderResponse.of(request).reject(ErrorCode.INSUFFICIENT_BALANCE);
         }
     }
 }

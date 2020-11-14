@@ -92,6 +92,7 @@ class TradeServiceTest {
         // BUY: price 15, size 5
         // should match 10, 11, 12, 13, 14 in order
         OrderResponse response = tradeService.place(createOrder(14, 5, Side.BUY));
+        assertThat(response.getOrderId()).isNotZero();
         List<FilledOrder> filledOrders = response.getFilledOrders();
         assertThat(filledOrders).hasSize(5);
         assertThat(filledOrders.get(0).getPrice()).isEqualTo(10);
@@ -110,6 +111,7 @@ class TradeServiceTest {
         // BUY 20 size 10
         // match 15, 16, 17, 18, 19, and result in partially filled
         response = tradeService.place(createOrder(20, 10, Side.BUY));
+        assertThat(response.getOrderId()).isNotZero();
         assertThat(response.getStatus()).isEqualTo(OrderStatus.PARTIALLY_FILLED);
     }
 
@@ -121,6 +123,7 @@ class TradeServiceTest {
         tradeService.place(createOrder(101d, 2, Side.SELL));
 
         OrderResponse response = tradeService.place(createOrder(105, 5, Side.BUY));
+        assertThat(response.getOrderId()).isNotZero();
         List<FilledOrder> filledOrders = response.getFilledOrders();
         assertThat(filledOrders).hasSize(2);
         assertThat(filledOrders.get(0).getPrice()).isEqualTo(100d);
@@ -141,6 +144,7 @@ class TradeServiceTest {
 
         // SELL: price 16, size 5
         OrderResponse response = tradeService.place(createOrder(16, 5, Side.SELL));
+        assertThat(response.getOrderId()).isNotZero();
         List<FilledOrder> filledOrders = response.getFilledOrders();
         assertThat(filledOrders).hasSize(5);
         assertThat(filledOrders.get(0).getPrice()).isEqualTo(20);
@@ -175,6 +179,7 @@ class TradeServiceTest {
         //      size = 0.1, 0.1, 0.1, ..., 0.1   , total = 1
 
         OrderResponse response = tradeService.place(createOrder(505, 0.5, Side.BUY));
+        assertThat(response.getOrderId()).isNotZero();
         List<FilledOrder> filledOrders = response.getFilledOrders();
         assertThat(filledOrders).hasSize(5);
         assertThat(filledOrders.get(0).getSize()).isEqualTo(BigDecimal.valueOf(0.1));

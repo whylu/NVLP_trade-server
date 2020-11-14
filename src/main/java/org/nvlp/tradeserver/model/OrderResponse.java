@@ -10,7 +10,7 @@ import java.util.List;
 
 public class OrderResponse {
     private String symbol;
-    private String orderId;
+    private long orderId;
     private OrderStatus status;
     private OrderType type;
     private Side side;
@@ -18,6 +18,7 @@ public class OrderResponse {
     private BigDecimal size; // original size
     private long transactTime;  // the time order handle by trade server
     private List<FilledOrder> filledOrders;
+    private ErrorCode errorCode;
 
 
     public static OrderResponse of(PlaceOrderRequest request) {
@@ -38,7 +39,7 @@ public class OrderResponse {
         return symbol;
     }
 
-    public String getOrderId() {
+    public long getOrderId() {
         return orderId;
     }
 
@@ -66,9 +67,14 @@ public class OrderResponse {
         return transactTime;
     }
 
-    public OrderResponse reject() {
+    public int getErrorCode() {
+        return errorCode==null? 0 : errorCode.getCode();
+    }
+
+    public OrderResponse reject(ErrorCode errorCode) {
         status = OrderStatus.REJECTED;
         transactTime = Instant.now().toEpochMilli();
+        this.errorCode = errorCode;
         return this;
     }
 
@@ -77,6 +83,7 @@ public class OrderResponse {
     }
 
     public OrderResponse compose(OrderInsertResult orderInsertResult) {
+        orderId = orderInsertResult.getOrderId();
         List<FilledOrder> filledOrderList = orderInsertResult.getFilledOrderList();
         if(!filledOrderList.isEmpty()) { // partially or full transacted
             status = size.compareTo(orderInsertResult.getFilledSize())==0? OrderStatus.FILLED : OrderStatus.PARTIALLY_FILLED;

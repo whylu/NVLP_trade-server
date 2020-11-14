@@ -84,9 +84,31 @@ class OrderControllerTest {
         ;
     }
 
+
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+    @Test
+    void placeOrder_insufficient_balance() throws Exception {
+        mockMvc.perform(post("/order")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                        "userId": 1,
+                        "symbol": "BTC-USD",
+                        "type": "LIMIT", 
+                        "side": "BUY",
+                        "price": 1000,
+                        "size": 1
+                    }
+                    """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.errorCode").value(-6))
+                ;
+    }
+
+    @DirtiesContext
     @Test
     void placeOrder() throws Exception {
-        PlaceOrderRequest request = new PlaceOrderRequest();
+        walletService.deposit(new DepositRequest(1, 1000, "USD"));
 
         mockMvc.perform(post("/order")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -101,6 +123,13 @@ class OrderControllerTest {
                     }
                     """))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.orderId").isNotEmpty())
+                .andExpect(jsonPath("$.status").value("INSERTED"))
+                .andExpect(jsonPath("$.price").value(1))
+                .andExpect(jsonPath("$.size").value(1))
+                .andExpect(jsonPath("$.side").value("BUY"))
+                .andExpect(jsonPath("$.type").value("LIMIT"))
+                .andExpect(jsonPath("$.symbol").value("BTC-USD"))
                 ;
     }
 
