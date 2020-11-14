@@ -2,8 +2,8 @@ package org.nvlp.tradeserver.service;
 
 import org.junit.jupiter.api.Test;
 import org.nvlp.tradeserver.model.DepositRequest;
-import org.nvlp.tradeserver.model.PlaceOrderRequest;
 import org.nvlp.tradeserver.model.OrderResponse;
+import org.nvlp.tradeserver.model.PlaceOrderRequest;
 import org.nvlp.tradeserver.model.enumn.OrderStatus;
 import org.nvlp.tradeserver.model.enumn.OrderType;
 import org.nvlp.tradeserver.model.enumn.Side;
@@ -17,8 +17,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 @DirtiesContext

@@ -1,7 +1,9 @@
 package org.nvlp.tradeserver.service;
 
 import org.junit.jupiter.api.Test;
-import org.nvlp.tradeserver.model.*;
+import org.nvlp.tradeserver.model.FilledOrder;
+import org.nvlp.tradeserver.model.OrderResponse;
+import org.nvlp.tradeserver.model.PlaceOrderRequest;
 import org.nvlp.tradeserver.model.enumn.OrderStatus;
 import org.nvlp.tradeserver.model.enumn.OrderType;
 import org.nvlp.tradeserver.model.enumn.Side;

@@ -1,8 +1,8 @@
 package org.nvlp.tradeserver.service;
 
 import org.junit.jupiter.api.Test;
-import org.nvlp.tradeserver.model.PlaceOrderRequest;
 import org.nvlp.tradeserver.model.ErrorCode;
+import org.nvlp.tradeserver.model.PlaceOrderRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 

@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 class OrderBookTest {
 

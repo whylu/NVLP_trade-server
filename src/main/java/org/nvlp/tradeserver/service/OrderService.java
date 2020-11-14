@@ -2,16 +2,14 @@ package org.nvlp.tradeserver.service;
 
 
 import org.nvlp.tradeserver.model.ErrorCode;
-import org.nvlp.tradeserver.model.PlaceOrderRequest;
 import org.nvlp.tradeserver.model.OrderResponse;
+import org.nvlp.tradeserver.model.PlaceOrderRequest;
 import org.nvlp.tradeserver.model.Wallet;
 import org.nvlp.tradeserver.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.math.BigDecimal;
 
 @Component
 public class OrderService {
