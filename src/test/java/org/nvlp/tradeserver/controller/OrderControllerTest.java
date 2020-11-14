@@ -140,6 +140,67 @@ class OrderControllerTest {
                 ;
     }
 
+
+
+    @DirtiesContext
+    @Test
+    void placeOrder_filled() throws Exception {
+        walletService.deposit(new DepositRequest(1, 1000, "USD"));
+
+        mockMvc.perform(post("/order")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                   {"userId":1,"symbol":"BTC-USD","type":"LIMIT","side":"BUY","price":1,"size":0.1}
+                   """));
+        mockMvc.perform(post("/order")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                   {"userId":1,"symbol":"BTC-USD","type":"LIMIT","side":"BUY","price":1,"size":0.2}
+                   """));
+
+        walletService.deposit(new DepositRequest(2, 1000, "BTC"));
+        mockMvc.perform(post("/order")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                        "userId": 2,
+                        "symbol": "BTC-USD",
+                        "type": "LIMIT", 
+                        "side": "SELL",
+                        "price": 1,
+                        "size": 0.3
+                    }
+                    """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.orderId").isNotEmpty())
+                .andExpect(jsonPath("$.status").value("FILLED"))
+                .andExpect(jsonPath("$.price").value(1))
+                .andExpect(jsonPath("$.size").value(0.3))
+                .andExpect(jsonPath("$.side").value("SELL"))
+                .andExpect(jsonPath("$.type").value("LIMIT"))
+                .andExpect(jsonPath("$.symbol").value("BTC-USD"))
+                .andExpect(jsonPath("$.filledOrders").isArray())
+                .andExpect(jsonPath("$.filledOrders", hasSize(2)))
+                .andExpect(jsonPath("$.filledOrders[0].price").value(1))
+                .andExpect(jsonPath("$.filledOrders[0].size").value(0.1))
+                .andExpect(jsonPath("$.filledOrders[1].price").value(1))
+                .andExpect(jsonPath("$.filledOrders[1].size").value(0.2))
+
+                .andExpect(jsonPath("$.filledOrders[0].id").doesNotExist())
+                .andExpect(jsonPath("$.filledOrders[0].cutOffFrozenAmount").doesNotExist())
+                .andExpect(jsonPath("$.filledOrders[0].realizeAmount").doesNotExist())
+                .andExpect(jsonPath("$.filledOrders[0].origSize").doesNotExist())
+
+
+
+
+
+
+        ;
+
+
+    }
+
     @DirtiesContext
     @Test
     void book() throws Exception {

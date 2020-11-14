@@ -24,6 +24,7 @@ public class PendingOrder {
         this.side = side;
     }
 
+    @JsonIgnore
     public long getId() {
         return id;
     }
@@ -32,6 +33,7 @@ public class PendingOrder {
         return price;
     }
 
+    @JsonIgnore
     public BigDecimal getOrigSize() {
         return origSize;
     }
