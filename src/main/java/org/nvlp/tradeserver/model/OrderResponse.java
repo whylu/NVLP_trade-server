@@ -1,5 +1,6 @@
 package org.nvlp.tradeserver.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.nvlp.tradeserver.model.enumn.OrderStatus;
 import org.nvlp.tradeserver.model.enumn.OrderType;
 import org.nvlp.tradeserver.model.enumn.Side;
@@ -78,6 +79,7 @@ public class OrderResponse {
         return this;
     }
 
+    @JsonIgnore
     public boolean isRejected() {
         return status == OrderStatus.REJECTED;
     }
