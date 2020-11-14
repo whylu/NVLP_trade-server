@@ -50,11 +50,24 @@ public class TradeService {
 
     public OrderResponse place(PlaceOrderRequest request) {
         OrderBook orderBook = marketOrderBooks.get(request.getSymbol());
-        OrderInsertResult orderInsertResult = orderBook
-                .insertOrder(request.getPrice(), request.getSize(), request.getSide());
+        OrderInsertResult orderInsertResult = orderBook.insertOrder(request);
+        printLog(request, orderInsertResult);
         realizeFillOrderAssetToWallet(request, orderInsertResult);
         updateOrderIdUserIdMap(request, orderInsertResult);
         return OrderResponse.of(request).compose(orderInsertResult);
+    }
+
+    private void printLog(PlaceOrderRequest request, OrderInsertResult orderInsertResult) {
+        if(!orderInsertResult.getFilledOrderList().isEmpty()) {
+            for (FilledOrder filledOrder : orderInsertResult.getFilledOrderList()) {
+                LOG.info("[UID:{}][OID:{}] filled {} by pending orderId:{}", request.getUserId(), orderInsertResult.getOrderId(), filledOrder.getSize(), filledOrder.getId());
+            }
+        }
+        if(orderInsertResult.getPendingOrder()!=null) {
+            LOG.info("[UID:{}][OID:{}] pending remain {}", request.getUserId(), orderInsertResult.getOrderId(), orderInsertResult.getPendingOrder().getSize());
+        } else {
+            LOG.info("[UID:{}][OID:{}] fully filled", request.getUserId(), orderInsertResult.getOrderId());
+        }
     }
 
     /**
@@ -134,8 +147,13 @@ public class TradeService {
 
         // TODO: check race condition
         // this function is only for limit order
-        public OrderInsertResult insertOrder(double price, BigDecimal size, Side side) {
+        public OrderInsertResult insertOrder(PlaceOrderRequest request) {
+            double price = request.getPrice();
+            BigDecimal size = request.getSize();
+            Side side = request.getSide();
             long orderId = nextOrderId();
+            LOG.info("[UID:{}][OID:{}] place {} order {} {} {} at {}", request.getUserId(), orderId,
+                    request.getType(), side, size.stripTrailingZeros().toPlainString(), request.getSymbol(), request.getPrice());
             OrderInsertResult result = new OrderInsertResult(orderId);
 
             // match exist order

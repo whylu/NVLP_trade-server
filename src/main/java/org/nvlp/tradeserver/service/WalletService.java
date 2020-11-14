@@ -26,7 +26,9 @@ public class WalletService {
 
     // thread-safe
     public Wallet deposit(DepositRequest depositRequest) {
-        return increaseAmount(depositRequest.getUserId(), depositRequest.getCurrency(), depositRequest.getAmount());
+        Wallet wallet = increaseAmount(depositRequest.getUserId(), depositRequest.getCurrency(), depositRequest.getAmount());
+        LOG.info("[UID:{}] deposit {} {}", depositRequest.getUserId(), depositRequest.getAmount(), depositRequest.getCurrency());
+        return wallet;
     }
 
     private Wallet increaseAmount(int userId, String currency, double amount) {
@@ -158,7 +160,7 @@ public class WalletService {
         if(success) {
             success = payFrozenAndReceiveRealize(makerPayWallet, takerReceiveWallet, makerAmount);
             if(success) {
-                LOG.info("swapFrozenAndRealizeAmount success: {}--({} {})-->{}, {}--({} {})-->{}",
+                LOG.info("swapFrozenAndRealizeAmount [user-{} pay {} {} to user-{}], [user-{} pay {} {} to user-{}]",
                         takerId, takerAmount, takerCurrency, makerId, makerId, makerAmount, makerCurrency, takerId);
 
             } else {
