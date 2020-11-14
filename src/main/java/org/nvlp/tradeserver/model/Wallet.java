@@ -1,5 +1,7 @@
 package org.nvlp.tradeserver.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.math.BigDecimal;
 
 public class Wallet {
@@ -14,6 +16,7 @@ public class Wallet {
         this.userId = userId;
     }
 
+    @JsonIgnore
     public BigDecimal getFrozen() {
         return frozen;
     }
