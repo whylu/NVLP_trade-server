@@ -135,6 +135,8 @@ class OrderControllerTest {
                 .andExpect(jsonPath("$.side").value("BUY"))
                 .andExpect(jsonPath("$.type").value("LIMIT"))
                 .andExpect(jsonPath("$.symbol").value("BTC-USD"))
+
+                .andExpect(jsonPath("$.rejected").doesNotExist())
                 ;
     }
 
