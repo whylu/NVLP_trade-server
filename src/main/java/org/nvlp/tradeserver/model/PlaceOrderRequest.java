@@ -86,18 +86,22 @@ public class PlaceOrderRequest {
     }
 
     @JsonIgnore
-    public boolean isValid() {
+    public ErrorCode isValid() {
         if(userId <= 0)
-            return false;
+            return ErrorCode.MISSING_USER_ID;
+        if(type==null)
+            return ErrorCode.MISSING_ORDER_TYPE;
         if(getType()==null)
-            return false;
+            return ErrorCode.INVALID_ORDER_TYPE;
         if(getSide()==null)
-            return false;
+            return ErrorCode.MISSING_ORDER_SIDE;
         if(price<=0)
-            return false;
-        if(size==null || size.compareTo(BigDecimal.ZERO)<=0)
-            return false;
-        return true;
+            return ErrorCode.INVALID_ORDER_PRICE_ZERO;
+        if(size==null)
+            return ErrorCode.MISSING_ORDER_SIZE;
+        if(size.compareTo(BigDecimal.ZERO)<=0)
+            return ErrorCode.INVALID_ORDER_SIZE_ZERO;
+        return null;
     }
 
     @JsonIgnore

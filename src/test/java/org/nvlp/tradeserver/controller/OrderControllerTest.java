@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.nvlp.tradeserver.model.DepositRequest;
 import org.nvlp.tradeserver.model.PlaceOrderRequest;
 import org.nvlp.tradeserver.model.ErrorCode;
+import org.nvlp.tradeserver.model.enumn.OrderStatus;
 import org.nvlp.tradeserver.model.enumn.OrderType;
 import org.nvlp.tradeserver.model.enumn.Side;
 import org.nvlp.tradeserver.service.OrderService;
@@ -44,7 +45,9 @@ class OrderControllerTest {
         mockMvc.perform(post("/order")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtils.toString(request)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is(OrderStatus.REJECTED.name())))
+        ;
 
         mockMvc.perform(post("/order")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -57,8 +60,10 @@ class OrderControllerTest {
                         "size": 1
                     }
                     """))
-                .andExpect(status().isBadRequest())
-        .andDo(print());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is(OrderStatus.REJECTED.name())))
+                .andExpect(jsonPath("$.errorCode", is(ErrorCode.INVALID_ORDER_TYPE.getCode())))
+        ;
     }
 
 
@@ -78,9 +83,9 @@ class OrderControllerTest {
                         "size": 1
                     }
                     """))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code", is(ErrorCode.INVALID_MARKER.getCode())))
-                .andExpect(jsonPath("$.msg", is(ErrorCode.INVALID_MARKER.getMsg())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.errorCode", is(ErrorCode.INVALID_MARKER.getCode())))
+                .andExpect(jsonPath("$.status", is(OrderStatus.REJECTED.name())))
         ;
     }
 
@@ -101,7 +106,7 @@ class OrderControllerTest {
                     }
                     """))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.errorCode").value(-6))
+                .andExpect(jsonPath("$.errorCode").value(ErrorCode.INSUFFICIENT_BALANCE.getCode()))
                 ;
     }
 

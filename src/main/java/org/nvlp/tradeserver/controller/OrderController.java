@@ -29,12 +29,13 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity placeOrder(@RequestBody PlaceOrderRequest request) {
-        if(!request.isValid()) {
-            return ResponseEntity.badRequest().body("invalid place order request body");
-        }
-        ErrorCode errorCode = orderValidationService.validate(request);
+        ErrorCode errorCode = request.isValid();
         if(errorCode!=null) {
-            return ResponseEntity.badRequest().body(errorCode);
+            return ResponseEntity.ok(OrderResponse.of(request).reject(errorCode));
+        }
+        errorCode = orderValidationService.validate(request);
+        if(errorCode!=null) {
+            return ResponseEntity.ok(OrderResponse.of(request).reject(errorCode));
         }
 
         OrderResponse orderResponse = orderService.placeOrder(request);

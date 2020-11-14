@@ -15,8 +15,14 @@ public enum ErrorCode {
     INVALID_ORDER_SIZE_MIN(-4, "Order size less than minimum"),
     INVALID_ORDER_SIZE_INCREMENT(-5, "Order size increment invalid"),
 
-    INSUFFICIENT_BALANCE(-6, "insufficient balance"),
-
+    INSUFFICIENT_BALANCE(-6, "Insufficient balance"),
+    MISSING_USER_ID(-7, "Missing userId"),
+    MISSING_ORDER_TYPE(-8, "Missing order type"),
+    MISSING_ORDER_SIDE(-9, "Missing order side"),
+    INVALID_ORDER_PRICE_ZERO(-10, "Order price less than zero"),
+    MISSING_ORDER_SIZE(-11, "Missing order size"),
+    INVALID_ORDER_SIZE_ZERO(-12, "Order size less than zero"),
+    INVALID_ORDER_TYPE(-13, "Invalid order type"),
     ;
 
     private final int code;
