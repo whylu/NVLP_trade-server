@@ -1,4 +1,6 @@
 # Trade Server 
+[![Build Status](https://travis-ci.org/whylu/NVLP_trade-server.svg?branch=master)](https://travis-ci.org/whylu/NVLP_trade-server)
+[![codecov](https://codecov.io/gh/whylu/NVLP_trade-server/branch/master/graph/badge.svg)](https://codecov.io/gh/whylu/NVLP_trade-server)
 
 ## Run Server by docker image `whylu/nvlp-trade-server`
 ```sh
