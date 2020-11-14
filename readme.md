@@ -22,10 +22,8 @@ docker run --name trade-server -p 8080:8080 nvlp-trade-server
 ## Endpoints
 ### Get Orderbook of Market  
 GET `/order/book/<symbol>`  
-```sh
-curl "localhost:8080/order/book/BTC-USD"
-```
-response 
+
+Response 
 ```js
 {
   "bids":[
@@ -43,6 +41,11 @@ response
     [104,0.1]
   ]
 }
+```
+
+Example
+```sh
+curl "localhost:8080/order/book/BTC-USD"
 ```
 
 
@@ -73,8 +76,7 @@ Response
   "size": 1,
   "transactTime": 1605324752385,  // epoch in ms, 
   "filledOrders": null,
-  "errorCode": -6,
-  "rejected": true
+  "errorCode": -6
 }
 ```
 
@@ -121,8 +123,6 @@ Response
 }
 ```
 
-#### 
-
 Example
 ```sh
 curl -X POST -H "Content-Type: application/json" -d '{"userId" : 1, "symbol": "BTC-USD", "type" : "LIMIT", "side": "BUY", "price": 1, "size": 1}' "http://localhost:8080/order"
@@ -132,6 +132,14 @@ curl -X POST -H "Content-Type: application/json" -d '{"userId" : 1, "symbol": "B
 ### Get Wallet
 GET `/wallet/<userId>/<currency>`  
 
+Response
+```js
+{
+  "amount": 0,
+  "currency": "USD",
+  "userId": 1
+}
+````
 Example
 ```sh
 curl "localhost:8080/wallet/1/USD"
