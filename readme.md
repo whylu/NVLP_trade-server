@@ -21,7 +21,7 @@ docker run --name trade-server -p 8080:8080 nvlp-trade-server
 
 ## Endpoints
 ### Get Orderbook of Market  
-GET /order/book/<symbol>
+GET `/order/book/<symbol>`  
 ```sh
 curl "localhost:8080/order/book/BTC-USD"
 ```
@@ -47,7 +47,7 @@ response
 
 
 ### Place Order
-POST /order  
+POST `/order`  
 Body
 ```js
 {
@@ -130,7 +130,7 @@ curl -X POST -H "Content-Type: application/json" -d '{"userId" : 1, "symbol": "B
 
 
 ### Get Wallet
-GET /wallet/<userId>/<currency>   
+GET `/wallet/<userId>/<currency>`  
 
 Example
 ```sh
@@ -139,7 +139,7 @@ curl "localhost:8080/wallet/1/USD"
 
 
 ### Deposite Wallet
-POST /wallet/deposit  
+POST `/wallet/deposit`  
 Body
 ```js
 {
