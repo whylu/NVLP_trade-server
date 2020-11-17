@@ -227,9 +227,6 @@ public class TradeService {
 
 
         private PendingOrder insertPendingOrder(long orderId, double price, BigDecimal size, Side side) {
-            if(size.compareTo(BigDecimal.ZERO)<=0) {
-                return null;
-            }
             ConcurrentNavigableMap<Double, PendingOrderQueue> book = side==Side.BUY? this.bidBook : this.askBook;
             ConcurrentNavigableMap<Double, BigDecimal> bookSummary = side==Side.BUY? this.bidBookSummary : this.askBookSummary;
             PendingOrderQueue pendingOrderQueue = book.get(price);
