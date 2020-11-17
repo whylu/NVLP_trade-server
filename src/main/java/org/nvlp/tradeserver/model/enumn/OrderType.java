@@ -1,10 +1,12 @@
 package org.nvlp.tradeserver.model.enumn;
 
 public enum OrderType {
-    LIMIT
+    LIMIT,
     ;
 
     public static OrderType of(String type) {
+        OrderType[] values = OrderType.values();
+
         if(LIMIT.name().equals(type)) {
             return LIMIT;
         }
