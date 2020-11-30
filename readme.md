@@ -2,6 +2,29 @@
 [![Build Status](https://travis-ci.com/whylu/NVLP_trade-server.svg?branch=master)](https://travis-ci.com/whylu/NVLP_trade-server)
 [![codecov](https://codecov.io/gh/whylu/NVLP_trade-server/branch/master/graph/badge.svg)](https://codecov.io/gh/whylu/NVLP_trade-server)
 
+## Description
+This is a interview task of Backend Engineer for NVLP, which is a company building a crypto exchange.
+```
+Limit order
+Implement a program simulating limit order functionality. 
+Program allows to buy or sell X token
+Program should handle one pair: USD - X token. 
+Program should have two inputs:
+ - to deposit funds (USD/X) and keep track (display) of the current balance. 
+ - to place limit order to buy/sell X token
+Program can simulate incoming buy/sell requests from other users. 
+Matching algorithm - any.
+Programming language - any, preferable JAVA
+Database - no need, can keep in memory
+Please make sure proper tests coverage is provided, so we can understand how the program works. 
+Please provide a codebase with docker set up along with instructions how to execute.
+What are we going to check:
+ - Matching algorithm (speed, complexity ...) 
+ - Quality of code (structure, patterns ... ) 
+ - Quality of tests
+```
+
+
 ## Run Server by docker image `whylu/nvlp-trade-server`
 ```sh
 docker run --name trade-server -p 8080:8080 whylu/nvlp-trade-server
